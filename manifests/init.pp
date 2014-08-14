@@ -4,6 +4,7 @@
 #
 class nfs (
   $hiera_hash  = false,
+  $is_server = false,
   $nfs_package = 'USE_DEFAULTS',
   $nfs_service = 'USE_DEFAULTS',
   $mounts      = undef,
@@ -139,4 +140,18 @@ class nfs (
     validate_hash($mounts_real)
     create_resources('types::mount',$mounts_real)
   }
+
+  #if we are a server include server class
+  if $is_server == true {
+
+     #if this is a debian based system install nfs server (red hat uses nfs-utils)
+     case $::osfamily {
+      'Debian': {
+          package { 'nfs-kernel-server':
+            ensure => 'installed',
+          }
+      }
+   }
+    include nfs::server
+  } 
 }
