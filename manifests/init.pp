@@ -115,8 +115,10 @@ class nfs (
     $nfs_service_real = $nfs_service
   }
 
-  package { $nfs_package_real:
-    ensure => present,
+  if ! defined( Package[$nfs_package_real] ) {
+    package { $nfs_package_real:
+      ensure => present,
+    }
   }
 
   if $nfs_service_real {
